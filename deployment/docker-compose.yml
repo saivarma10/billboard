@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: billboard-postgres
+    environment:
+      POSTGRES_DB: billboard
+      POSTGRES_USER: billboard_user
+      POSTGRES_PASSWORD: billboard_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - billboard-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: billboard-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - billboard-network
+
+  # Backend API
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: billboard-backend
+    environment:
+      DATABASE_URL: postgres://billboard_user:billboard_password@postgres:5432/billboard?sslmode=disable
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: your-super-secret-jwt-key-here
+      PORT: 8080
+      ENVIRONMENT: production
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - billboard-network
+
+  # Frontend Web App
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: billboard-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - billboard-network
+
+volumes:
+  postgres_data:
+
+networks:
+  billboard-network:
+    driver: bridge
