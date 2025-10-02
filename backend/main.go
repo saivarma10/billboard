@@ -60,11 +60,11 @@ func main() {
 
 	// CORS configuration
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3005", "http://localhost:3001"},
+		AllowOrigins:     []string{"*"}, // Allow all origins for public deployment
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
+		AllowCredentials: false, // Set to false when using wildcard origins
 	}))
 
 	// Add health check endpoint
