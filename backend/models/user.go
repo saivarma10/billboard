@@ -59,3 +59,30 @@ type ShopUser struct {
 	Shop Shop `json:"shop,omitempty" gorm:"foreignKey:ShopID"`
 	User User `json:"user,omitempty" gorm:"foreignKey:UserID"`
 }
+
+// ShopRequest represents the request payload for creating/updating a shop
+type ShopRequest struct {
+	Name      string `json:"name" binding:"required"`
+	Address   string `json:"address"`
+	Phone     string `json:"phone"`
+	Email     string `json:"email"`
+	GSTNumber string `json:"gst_number"`
+	LogoURL   string `json:"logo_url"`
+	Settings  string `json:"settings"`
+	IsActive  bool   `json:"is_active"`
+}
+
+// ShopResponse represents the response payload for shop data
+type ShopResponse struct {
+	ID        uuid.UUID `json:"id"`
+	Name      string    `json:"name"`
+	Address   string    `json:"address"`
+	Phone     string    `json:"phone"`
+	Email     string    `json:"email"`
+	GSTNumber string    `json:"gst_number"`
+	LogoURL   string    `json:"logo_url"`
+	Settings  string    `json:"settings"`
+	IsActive  bool      `json:"is_active"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}

@@ -52,8 +52,12 @@ func SetupRoutes(router *gin.Engine, services *services.Services) {
 				{
 					items.GET("", itemHandler.GetItems)
 					items.POST("", itemHandler.CreateItem)
+					items.POST("/bulk", itemHandler.BulkCreateItems)
+					items.GET("/categories", itemHandler.GetCategories)
+					items.GET("/low-stock", itemHandler.GetLowStockItems)
 					items.GET("/:id", itemHandler.GetItem)
 					items.PUT("/:id", itemHandler.UpdateItem)
+					items.PUT("/:id/quantity", itemHandler.UpdateItemQuantity)
 					items.DELETE("/:id", itemHandler.DeleteItem)
 				}
 
@@ -62,9 +66,10 @@ func SetupRoutes(router *gin.Engine, services *services.Services) {
 				{
 					customers.GET("", customerHandler.GetCustomers)
 					customers.POST("", customerHandler.CreateCustomer)
-					customers.GET("/:id", customerHandler.GetCustomer)
-					customers.PUT("/:id", customerHandler.UpdateCustomer)
-					customers.DELETE("/:id", customerHandler.DeleteCustomer)
+					customers.GET("/stats", customerHandler.GetCustomerStats)
+					customers.GET("/:customerId", customerHandler.GetCustomer)
+					customers.PUT("/:customerId", customerHandler.UpdateCustomer)
+					customers.DELETE("/:customerId", customerHandler.DeleteCustomer)
 				}
 
 				// Bills
@@ -72,11 +77,12 @@ func SetupRoutes(router *gin.Engine, services *services.Services) {
 				{
 					bills.GET("", billHandler.GetBills)
 					bills.POST("", billHandler.CreateBill)
-					bills.GET("/:id", billHandler.GetBill)
-					bills.PUT("/:id", billHandler.UpdateBill)
-					bills.DELETE("/:id", billHandler.DeleteBill)
-					bills.POST("/:id/pdf", billHandler.GeneratePDF)
-					bills.POST("/:id/payments", billHandler.AddPayment)
+					bills.GET("/stats", billHandler.GetBillStats)
+					bills.GET("/:billId", billHandler.GetBill)
+					bills.PUT("/:billId", billHandler.UpdateBill)
+					bills.DELETE("/:billId", billHandler.DeleteBill)
+					bills.POST("/:billId/pdf", billHandler.GeneratePDF)
+					bills.POST("/:billId/payments", billHandler.AddPayment)
 				}
 
 				// Analytics

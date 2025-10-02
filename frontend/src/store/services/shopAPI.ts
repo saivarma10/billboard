@@ -20,7 +20,9 @@ api.interceptors.request.use((config) => {
 
 export const shopAPI = {
   getShops: async () => {
+    console.log('shopAPI.getShops: Making API call to /shops')
     const response = await api.get('/shops')
+    console.log('shopAPI.getShops: Response received:', response.data)
     return response
   },
 

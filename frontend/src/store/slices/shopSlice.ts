@@ -35,8 +35,10 @@ export const fetchShops = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await shopAPI.getShops()
-      return response.data
+      console.log('fetchShops API response:', response.data)
+      return response.data.data || []
     } catch (error: any) {
+      console.error('fetchShops error:', error)
       return rejectWithValue(error.response?.data?.error || 'Failed to fetch shops')
     }
   }
@@ -47,8 +49,10 @@ export const createShop = createAsyncThunk(
   async (shopData: any, { rejectWithValue }) => {
     try {
       const response = await shopAPI.createShop(shopData)
-      return response.data
+      console.log('createShop API response:', response.data)
+      return response.data.data
     } catch (error: any) {
+      console.error('createShop error:', error)
       return rejectWithValue(error.response?.data?.error || 'Failed to create shop')
     }
   }
@@ -59,8 +63,10 @@ export const updateShop = createAsyncThunk(
   async ({ shopId, shopData }: { shopId: string; shopData: any }, { rejectWithValue }) => {
     try {
       const response = await shopAPI.updateShop(shopId, shopData)
-      return response.data
+      console.log('updateShop API response:', response.data)
+      return response.data.data
     } catch (error: any) {
+      console.error('updateShop error:', error)
       return rejectWithValue(error.response?.data?.error || 'Failed to update shop')
     }
   }
@@ -112,7 +118,7 @@ const shopSlice = createSlice({
       })
       .addCase(createShop.fulfilled, (state, action) => {
         state.loading = false
-        state.shops.push(action.payload)
+        state.shops = [...state.shops, action.payload]
         state.error = null
       })
       .addCase(createShop.rejected, (state, action) => {
@@ -128,7 +134,11 @@ const shopSlice = createSlice({
         state.loading = false
         const index = state.shops.findIndex(shop => shop.id === action.payload.id)
         if (index !== -1) {
-          state.shops[index] = action.payload
+          state.shops = [
+            ...state.shops.slice(0, index),
+            action.payload,
+            ...state.shops.slice(index + 1)
+          ]
         }
         if (state.currentShop?.id === action.payload.id) {
           state.currentShop = action.payload

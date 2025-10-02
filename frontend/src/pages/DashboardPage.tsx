@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import {
   Grid,
   Typography,
@@ -22,6 +23,7 @@ import { fetchShops } from '../store/slices/shopSlice'
 
 const DashboardPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>()
+  const navigate = useNavigate()
   const loading = useSelector((state: RootState) => (state.shop as any)?.loading || false)
 
   useEffect(() => {
@@ -60,10 +62,34 @@ const DashboardPage: React.FC = () => {
   ]
 
   const quickActions = [
-    { title: 'Create New Bill', icon: <ReceiptIcon />, color: '#3b82f6' },
-    { title: 'Add Item', icon: <InventoryIcon />, color: '#059669' },
-    { title: 'Add Customer', icon: <PeopleIcon />, color: '#d97706' },
-    { title: 'View Reports', icon: <TrendingUpIcon />, color: '#7c3aed' },
+    { 
+      title: 'Create New Bill', 
+      icon: <ReceiptIcon />, 
+      color: '#3b82f6',
+      path: '/bills',
+      onClick: () => navigate('/bills')
+    },
+    { 
+      title: 'Add Item', 
+      icon: <InventoryIcon />, 
+      color: '#059669',
+      path: '/items',
+      onClick: () => navigate('/items')
+    },
+    { 
+      title: 'Add Customer', 
+      icon: <PeopleIcon />, 
+      color: '#d97706',
+      path: '/customers',
+      onClick: () => navigate('/customers')
+    },
+    { 
+      title: 'View Reports', 
+      icon: <TrendingUpIcon />, 
+      color: '#7c3aed',
+      path: '/dashboard',
+      onClick: () => navigate('/dashboard')
+    },
   ]
 
   if (loading) {
@@ -144,6 +170,7 @@ const DashboardPage: React.FC = () => {
                       fullWidth
                       variant="outlined"
                       startIcon={action.icon}
+                      onClick={action.onClick}
                       sx={{
                         py: 2,
                         borderRadius: 2,
