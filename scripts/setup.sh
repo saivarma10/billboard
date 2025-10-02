@@ -43,6 +43,6 @@ docker-compose ps
 
 echo "Setup complete!"
 echo "Backend API: http://localhost:8080"
-echo "Frontend: http://localhost:3000"
+echo "Frontend: http://localhost:3005"
 echo "PostgreSQL: localhost:5432"
 echo "Redis: localhost:6379"

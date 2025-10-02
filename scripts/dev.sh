@@ -30,7 +30,7 @@ trap cleanup SIGINT
 
 echo "Development servers started!"
 echo "Backend: http://localhost:8080"
-echo "Frontend: http://localhost:3000"
+echo "Frontend: http://localhost:3005"
 echo "Press Ctrl+C to stop all services"
 
 # Wait for processes

@@ -52,7 +52,7 @@ services:
       dockerfile: Dockerfile
     container_name: billboard-frontend
     ports:
-      - "3000:3000"
+      - "3005:3000"
     depends_on:
       - backend
     networks:

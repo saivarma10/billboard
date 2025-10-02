@@ -58,7 +58,7 @@ cd billboard
 ```
 
 **2. Access the application:**
-- **Frontend**: http://localhost:3000
+- **Frontend**: http://localhost:3005
 - **Backend API**: http://localhost:8080
 - **Database**: localhost:5432
 - **Redis**: localhost:6379
