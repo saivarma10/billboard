@@ -80,7 +80,7 @@ func main() {
 		Customer: customerService,
 		Shop:     shopService,
 		PDF:      pdfService,
-	})
+	}, db)
 
 	// Start server
 	port := os.Getenv("PORT")

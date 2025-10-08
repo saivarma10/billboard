@@ -36,6 +36,7 @@ import {
   Paper,
   Autocomplete,
   Popper,
+  CircularProgress,
 } from '@mui/material'
 import {
   Search as SearchIcon,
@@ -398,111 +399,72 @@ const ItemsPage: React.FC = () => {
   return (
     <Box sx={{ 
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
       position: 'relative',
-      '&::before': {
-        content: '""',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
-        pointerEvents: 'none',
-      }
     }}>
-      {/* Animated Background Elements */}
-      <Box sx={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: `
-          radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-          radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
-          radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%)
-        `,
-        animation: 'float 20s ease-in-out infinite',
-        '@keyframes float': {
-          '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
-          '50%': { transform: 'translateY(-20px) rotate(5deg)' },
-        }
-      }} />
-      
       <Box sx={{ position: 'relative', zIndex: 1, p: 3 }}>
-        {/* Stunning Header with Glass Morphism */}
+        {/* Modern Header */}
         <Fade in timeout={800}>
           <Paper elevation={0} sx={{
-            background: 'rgba(255, 255, 255, 0.95)',
-            backdropFilter: 'blur(20px)',
-            borderRadius: 4,
+            background: 'white',
+            borderRadius: 3,
             p: 4,
             mb: 4,
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-            position: 'relative',
-            overflow: 'hidden',
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: '4px',
-              background: 'linear-gradient(90deg, #667eea, #764ba2, #f093fb)',
-            }
+            border: '1px solid #e2e8f0',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)',
           }}>
-            <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={2}>
+            <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={3}>
               <Box display="flex" alignItems="center" gap={3}>
                 <Box sx={{
-                  p: 2,
-                  borderRadius: 3,
-                  background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                  p: 2.5,
+                  borderRadius: 2,
+                  background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
                   color: 'white',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 1,
-                  boxShadow: '0 4px 20px rgba(102, 126, 234, 0.4)',
+                  gap: 1.5,
+                  boxShadow: '0 4px 14px rgba(59, 130, 246, 0.3)',
                 }}>
-                  <InventoryIcon sx={{ fontSize: 28 }} />
-                  <Typography variant="h4" fontWeight="bold">
-                    Inventory Hub
+                  <InventoryIcon sx={{ fontSize: 24 }} />
+                  <Typography variant="h4" fontWeight="600" sx={{ fontSize: '1.75rem' }}>
+                    Inventory Management
                   </Typography>
                 </Box>
                 
                 <Box display="flex" gap={2}>
-                  <Tooltip title="Total Items">
-                    <Chip
-                      icon={<StoreIcon />}
-                      label={`${items.length} Items`}
-                      color="primary"
-                      variant="outlined"
-                      sx={{ 
-                        fontWeight: 'bold',
-                        '&:hover': { transform: 'scale(1.05)' },
-                        transition: 'all 0.2s ease'
-                      }}
-                    />
-                  </Tooltip>
+                  <Chip
+                    icon={<StoreIcon />}
+                    label={`${items.length} Items`}
+                    sx={{ 
+                      fontWeight: '500',
+                      backgroundColor: '#f1f5f9',
+                      color: '#475569',
+                      border: '1px solid #e2e8f0',
+                      '&:hover': { 
+                        backgroundColor: '#e2e8f0',
+                        transform: 'translateY(-1px)',
+                      },
+                      transition: 'all 0.2s ease'
+                    }}
+                  />
                   
-                  <Tooltip title="Low Stock Alert">
+                  {lowStockCount > 0 && (
                     <Chip
                       icon={<WarningIcon />}
                       label={`${lowStockCount} Low Stock`}
-                      color="error"
-                      variant="filled"
                       sx={{ 
-                        fontWeight: 'bold',
-                        animation: lowStockCount > 0 ? 'pulse 2s infinite' : 'none',
-                        '@keyframes pulse': {
-                          '0%': { transform: 'scale(1)' },
-                          '50%': { transform: 'scale(1.05)' },
-                          '100%': { transform: 'scale(1)' },
-                        }
+                        fontWeight: '500',
+                        backgroundColor: '#fef2f2',
+                        color: '#dc2626',
+                        border: '1px solid #fecaca',
+                        '&:hover': { 
+                          backgroundColor: '#fee2e2',
+                          transform: 'translateY(-1px)',
+                        },
+                        transition: 'all 0.2s ease'
                       }}
                     />
-                  </Tooltip>
+                  )}
                 </Box>
               </Box>
               
@@ -517,11 +479,13 @@ const ItemsPage: React.FC = () => {
                       setTimeout(() => setIsRefreshing(false), 1000)
                     }}
                     sx={{
-                      background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                      color: 'white',
+                      backgroundColor: '#f8fafc',
+                      color: '#64748b',
+                      border: '1px solid #e2e8f0',
                       '&:hover': {
+                        backgroundColor: '#3b82f6',
+                        color: 'white',
                         transform: 'rotate(180deg)',
-                        background: 'linear-gradient(135deg, #764ba2, #667eea)',
                       },
                       transition: 'all 0.3s ease'
                     }}
@@ -538,17 +502,18 @@ const ItemsPage: React.FC = () => {
                   startIcon={<FileUploadIcon />}
                   onClick={handleBulkImport}
                   sx={{ 
-                    borderRadius: 3,
+                    borderRadius: 2,
                     textTransform: 'none',
-                    fontWeight: 'bold',
-                    borderColor: 'primary.main',
+                    fontWeight: '500',
+                    borderColor: '#d1d5db',
+                    color: '#374151',
+                    backgroundColor: 'white',
                     '&:hover': {
-                      background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                      color: 'white',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 8px 25px rgba(102, 126, 234, 0.3)',
+                      backgroundColor: '#f3f4f6',
+                      borderColor: '#9ca3af',
+                      transform: 'translateY(-1px)',
                     },
-                    transition: 'all 0.3s ease'
+                    transition: 'all 0.2s ease'
                   }}
                 >
                   Import
@@ -559,17 +524,18 @@ const ItemsPage: React.FC = () => {
                   startIcon={<FileDownloadIcon />}
                   onClick={handleBulkExport}
                   sx={{ 
-                    borderRadius: 3,
+                    borderRadius: 2,
                     textTransform: 'none',
-                    fontWeight: 'bold',
-                    borderColor: 'primary.main',
+                    fontWeight: '500',
+                    borderColor: '#d1d5db',
+                    color: '#374151',
+                    backgroundColor: 'white',
                     '&:hover': {
-                      background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                      color: 'white',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 8px 25px rgba(102, 126, 234, 0.3)',
+                      backgroundColor: '#f3f4f6',
+                      borderColor: '#9ca3af',
+                      transform: 'translateY(-1px)',
                     },
-                    transition: 'all 0.3s ease'
+                    transition: 'all 0.2s ease'
                   }}
                 >
                   Export
@@ -583,42 +549,41 @@ const ItemsPage: React.FC = () => {
                     setCreateDialogOpen(true)
                   }}
                   sx={{ 
-                    borderRadius: 3,
-                    px: 4,
+                    borderRadius: 2,
+                    px: 3,
                     py: 1.5,
                     textTransform: 'none',
-                    fontWeight: 'bold',
-                    fontSize: '1rem',
-                    background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                    boxShadow: '0 8px 25px rgba(102, 126, 234, 0.4)',
+                    fontWeight: '500',
+                    fontSize: '0.95rem',
+                    backgroundColor: '#3b82f6',
+                    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
                     '&:hover': {
-                      background: 'linear-gradient(135deg, #764ba2, #667eea)',
-                      transform: 'translateY(-3px)',
-                      boxShadow: '0 12px 35px rgba(102, 126, 234, 0.6)',
+                      backgroundColor: '#2563eb',
+                      transform: 'translateY(-1px)',
+                      boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)',
                     },
-                    transition: 'all 0.3s ease'
+                    transition: 'all 0.2s ease'
                   }}
                 >
-                  Create New Item
+                  Add Item
                 </Button>
               </Box>
             </Box>
           </Paper>
         </Fade>
 
-        {/* Advanced Search and Filter Section */}
+        {/* Search and Filter Section */}
         <Slide direction="down" in timeout={1000}>
           <Paper elevation={0} sx={{
-            background: 'rgba(255, 255, 255, 0.9)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: 4,
+            background: 'white',
+            borderRadius: 2,
             p: 3,
             mb: 3,
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+            border: '1px solid #e2e8f0',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)',
           }}>
             <Box display="flex" gap={2} mb={2} flexWrap="wrap" alignItems="center">
-              {/* Advanced Search with Autocomplete */}
+              {/* Search Input */}
               <Box sx={{ flex: 1, minWidth: 300 }}>
                 <Autocomplete
                   freeSolo
@@ -644,20 +609,20 @@ const ItemsPage: React.FC = () => {
                         ...params.InputProps,
                         startAdornment: (
                           <InputAdornment position="start">
-                            <SearchIcon sx={{ color: 'primary.main' }} />
+                            <SearchIcon sx={{ color: '#64748b' }} />
                           </InputAdornment>
                         ),
                       }}
                       sx={{
                         '& .MuiOutlinedInput-root': {
-                          borderRadius: 3,
-                          background: 'rgba(255, 255, 255, 0.8)',
+                          borderRadius: 2,
+                          backgroundColor: '#f8fafc',
                           '&:hover': {
-                            background: 'rgba(255, 255, 255, 0.9)',
+                            backgroundColor: '#f1f5f9',
                           },
                           '&.Mui-focused': {
-                            background: 'white',
-                            boxShadow: '0 0 0 3px rgba(102, 126, 234, 0.1)',
+                            backgroundColor: 'white',
+                            boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)',
                           }
                         }
                       }}
@@ -669,91 +634,105 @@ const ItemsPage: React.FC = () => {
                 />
               </Box>
               
-              {/* Advanced Filter Toggle */}
+              {/* Filter Button */}
               <Button
                 variant="outlined"
                 startIcon={<FilterIcon />}
                 onClick={(e) => setFilterMenuAnchor(e.currentTarget)}
                 sx={{ 
-                  borderRadius: 3,
+                  borderRadius: 2,
                   textTransform: 'none',
-                  fontWeight: 'bold',
-                  borderColor: 'primary.main',
+                  fontWeight: '500',
+                  borderColor: '#d1d5db',
+                  color: '#374151',
+                  backgroundColor: 'white',
                   '&:hover': {
-                    background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                    color: 'white',
-                    transform: 'translateY(-2px)',
+                    backgroundColor: '#f3f4f6',
+                    borderColor: '#9ca3af',
+                    transform: 'translateY(-1px)',
                   },
-                  transition: 'all 0.3s ease'
+                  transition: 'all 0.2s ease'
                 }}
               >
                 Filters
               </Button>
               
               {/* View Mode Toggle */}
-              <Box display="flex" gap={1}>
+              <Box display="flex" gap={1} sx={{ border: '1px solid #e2e8f0', borderRadius: 2, p: 0.5 }}>
                 <Tooltip title="Grid View">
                   <IconButton
                     onClick={() => setViewMode('grid')}
+                    size="small"
                     sx={{
-                      background: viewMode === 'grid' ? 'linear-gradient(135deg, #667eea, #764ba2)' : 'transparent',
-                      color: viewMode === 'grid' ? 'white' : 'primary.main',
+                      backgroundColor: viewMode === 'grid' ? '#3b82f6' : 'transparent',
+                      color: viewMode === 'grid' ? 'white' : '#64748b',
+                      borderRadius: 1.5,
                       '&:hover': {
-                        background: viewMode === 'grid' ? 'linear-gradient(135deg, #764ba2, #667eea)' : 'rgba(102, 126, 234, 0.1)',
-                        transform: 'scale(1.1)',
+                        backgroundColor: viewMode === 'grid' ? '#2563eb' : '#f1f5f9',
+                        transform: 'scale(1.05)',
                       },
-                      transition: 'all 0.3s ease'
+                      transition: 'all 0.2s ease'
                     }}
                   >
-                    <GridIcon />
+                    <GridIcon sx={{ fontSize: 18 }} />
                   </IconButton>
                 </Tooltip>
                 
                 <Tooltip title="List View">
                   <IconButton
                     onClick={() => setViewMode('list')}
+                    size="small"
                     sx={{
-                      background: viewMode === 'list' ? 'linear-gradient(135deg, #667eea, #764ba2)' : 'transparent',
-                      color: viewMode === 'list' ? 'white' : 'primary.main',
+                      backgroundColor: viewMode === 'list' ? '#3b82f6' : 'transparent',
+                      color: viewMode === 'list' ? 'white' : '#64748b',
+                      borderRadius: 1.5,
                       '&:hover': {
-                        background: viewMode === 'list' ? 'linear-gradient(135deg, #764ba2, #667eea)' : 'rgba(102, 126, 234, 0.1)',
-                        transform: 'scale(1.1)',
+                        backgroundColor: viewMode === 'list' ? '#2563eb' : '#f1f5f9',
+                        transform: 'scale(1.05)',
                       },
-                      transition: 'all 0.3s ease'
+                      transition: 'all 0.2s ease'
                     }}
                   >
-                    <ListIcon />
+                    <ListIcon sx={{ fontSize: 18 }} />
                   </IconButton>
                 </Tooltip>
               </Box>
               
               {/* Sort Options */}
               <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>Sort By</InputLabel>
+                <InputLabel sx={{ fontSize: '0.875rem' }}>Sort By</InputLabel>
                 <Select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                   label="Sort By"
-                  sx={{ borderRadius: 3 }}
+                  sx={{ 
+                    borderRadius: 2,
+                    fontSize: '0.875rem',
+                    '& .MuiSelect-select': {
+                      padding: '8px 12px'
+                    }
+                  }}
                 >
-                  <MenuItem value="name">Name</MenuItem>
-                  <MenuItem value="price">Price</MenuItem>
-                  <MenuItem value="quantity">Quantity</MenuItem>
-                  <MenuItem value="category">Category</MenuItem>
-                  <MenuItem value="created_at">Date Added</MenuItem>
+                  <MenuItem value="name" sx={{ fontSize: '0.875rem' }}>Name</MenuItem>
+                  <MenuItem value="price" sx={{ fontSize: '0.875rem' }}>Price</MenuItem>
+                  <MenuItem value="quantity" sx={{ fontSize: '0.875rem' }}>Quantity</MenuItem>
+                  <MenuItem value="category" sx={{ fontSize: '0.875rem' }}>Category</MenuItem>
+                  <MenuItem value="created_at" sx={{ fontSize: '0.875rem' }}>Date Added</MenuItem>
                 </Select>
               </FormControl>
               
               <IconButton
                 onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
                 sx={{
-                  background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                  color: 'white',
+                  backgroundColor: '#f8fafc',
+                  color: '#64748b',
+                  border: '1px solid #e2e8f0',
                   '&:hover': {
-                    transform: 'scale(1.1)',
-                    background: 'linear-gradient(135deg, #764ba2, #667eea)',
+                    backgroundColor: '#3b82f6',
+                    color: 'white',
+                    transform: 'scale(1.05)',
                   },
-                  transition: 'all 0.3s ease'
+                  transition: 'all 0.2s ease'
                 }}
               >
                 {sortOrder === 'asc' ? <ArrowUpIcon /> : <ArrowDownIcon />}
@@ -767,12 +746,16 @@ const ItemsPage: React.FC = () => {
                   <Chip
                     label="Low Stock"
                     onDelete={() => handleFilterChange('lowStock', false)}
-                    color="error"
-                    variant="filled"
                     icon={<WarningIcon />}
                     sx={{ 
-                      fontWeight: 'bold',
-                      '&:hover': { transform: 'scale(1.05)' },
+                      fontWeight: '500',
+                      backgroundColor: '#fef2f2',
+                      color: '#dc2626',
+                      border: '1px solid #fecaca',
+                      '&:hover': { 
+                        backgroundColor: '#fee2e2',
+                        transform: 'scale(1.02)',
+                      },
                       transition: 'all 0.2s ease'
                     }}
                   />
@@ -783,12 +766,16 @@ const ItemsPage: React.FC = () => {
                   <Chip
                     label={filters.category}
                     onDelete={() => handleFilterChange('category', '')}
-                    color="primary"
-                    variant="filled"
                     icon={<CategoryIcon />}
                     sx={{ 
-                      fontWeight: 'bold',
-                      '&:hover': { transform: 'scale(1.05)' },
+                      fontWeight: '500',
+                      backgroundColor: '#eff6ff',
+                      color: '#2563eb',
+                      border: '1px solid #bfdbfe',
+                      '&:hover': { 
+                        backgroundColor: '#dbeafe',
+                        transform: 'scale(1.02)',
+                      },
                       transition: 'all 0.2s ease'
                     }}
                   />
@@ -799,12 +786,16 @@ const ItemsPage: React.FC = () => {
                   <Chip
                     label={`Search: "${filters.search}"`}
                     onDelete={() => handleSearch('')}
-                    color="secondary"
-                    variant="filled"
                     icon={<SearchIcon />}
                     sx={{ 
-                      fontWeight: 'bold',
-                      '&:hover': { transform: 'scale(1.05)' },
+                      fontWeight: '500',
+                      backgroundColor: '#f0fdf4',
+                      color: '#16a34a',
+                      border: '1px solid #bbf7d0',
+                      '&:hover': { 
+                        backgroundColor: '#dcfce7',
+                        transform: 'scale(1.02)',
+                      },
                       transition: 'all 0.2s ease'
                     }}
                   />
@@ -873,18 +864,17 @@ const ItemsPage: React.FC = () => {
           </Box>
         )}
 
-        {/* Stunning Items Display */}
+        {/* Items Display */}
         {loading ? (
           <Grid container spacing={3}>
             {[...Array(6)].map((_, index) => (
               <Grid item xs={12} sm={6} md={4} key={index}>
                 <Fade in timeout={index * 100}>
                   <Card sx={{
-                    background: 'rgba(255, 255, 255, 0.9)',
-                    backdropFilter: 'blur(10px)',
-                    borderRadius: 4,
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+                    background: 'white',
+                    borderRadius: 2,
+                    border: '1px solid #e2e8f0',
+                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)',
                   }}>
                     <CardContent sx={{ p: 3 }}>
                       <Skeleton variant="text" width="80%" height={24} />
@@ -901,35 +891,30 @@ const ItemsPage: React.FC = () => {
             <Paper elevation={0} sx={{
               p: 6,
               textAlign: 'center',
-              background: 'rgba(255, 255, 255, 0.9)',
-              backdropFilter: 'blur(10px)',
-              borderRadius: 4,
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+              background: 'white',
+              borderRadius: 2,
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)',
             }}>
               <Box sx={{
-                p: 4,
+                p: 3,
                 borderRadius: '50%',
-                background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
                 color: 'white',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 mb: 3,
-                animation: 'float 3s ease-in-out infinite',
-                '@keyframes float': {
-                  '0%, 100%': { transform: 'translateY(0px)' },
-                  '50%': { transform: 'translateY(-10px)' },
-                }
+                boxShadow: '0 4px 14px rgba(59, 130, 246, 0.3)',
               }}>
-                <InventoryIcon sx={{ fontSize: 48 }} />
+                <InventoryIcon sx={{ fontSize: 40 }} />
               </Box>
-              <Typography variant="h5" fontWeight="bold" color="text.primary" mb={2}>
+              <Typography variant="h5" fontWeight="600" color="#1f2937" mb={2}>
                 {filters.search || filters.category || filters.lowStock
                   ? 'No items match your filters'
                   : 'Your inventory is empty'}
               </Typography>
-              <Typography color="text.secondary" mb={4} sx={{ maxWidth: 400, mx: 'auto' }}>
+              <Typography color="#6b7280" mb={4} sx={{ maxWidth: 400, mx: 'auto', fontSize: '1rem' }}>
                 {filters.search || filters.category || filters.lowStock
                   ? 'Try adjusting your search terms or filters to find what you\'re looking for.'
                   : 'Start building your inventory by adding your first item. It\'s quick and easy!'}
@@ -940,20 +925,20 @@ const ItemsPage: React.FC = () => {
                 startIcon={<AddIcon />}
                 onClick={() => setCreateDialogOpen(true)}
                 sx={{
-                  background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                  borderRadius: 3,
+                  backgroundColor: '#3b82f6',
+                  borderRadius: 2,
                   px: 4,
                   py: 1.5,
                   textTransform: 'none',
-                  fontWeight: 'bold',
-                  fontSize: '1.1rem',
-                  boxShadow: '0 8px 25px rgba(102, 126, 234, 0.4)',
+                  fontWeight: '500',
+                  fontSize: '1rem',
+                  boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
                   '&:hover': {
-                    background: 'linear-gradient(135deg, #764ba2, #667eea)',
-                    transform: 'translateY(-3px)',
-                    boxShadow: '0 12px 35px rgba(102, 126, 234, 0.6)',
+                    backgroundColor: '#2563eb',
+                    transform: 'translateY(-1px)',
+                    boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)',
                   },
-                  transition: 'all 0.3s ease'
+                  transition: 'all 0.2s ease'
                 }}
               >
                 {filters.search || filters.category || filters.lowStock ? 'Clear Filters' : 'Add Your First Item'}
@@ -970,23 +955,20 @@ const ItemsPage: React.FC = () => {
                       height: '100%',
                       display: 'flex',
                       flexDirection: 'column',
-                      background: 'rgba(255, 255, 255, 0.95)',
-                      backdropFilter: 'blur(20px)',
-                      borderRadius: 4,
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+                      background: 'white',
+                      borderRadius: 2,
+                      border: '1px solid #e2e8f0',
+                      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)',
                       position: 'relative',
                       overflow: 'hidden',
-                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      transition: 'all 0.2s ease',
                       '&:hover': {
-                        transform: 'translateY(-8px) scale(1.02)',
-                        boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15)',
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                        borderColor: '#3b82f6',
                         '& .item-actions': {
                           opacity: 1,
                           transform: 'translateY(0)',
-                        },
-                        '& .item-gradient': {
-                          opacity: 1,
                         }
                       },
                       '&::before': {
@@ -995,64 +977,54 @@ const ItemsPage: React.FC = () => {
                         top: 0,
                         left: 0,
                         right: 0,
-                        height: '4px',
+                        height: '3px',
                         background: item.is_low_stock 
-                          ? 'linear-gradient(90deg, #ff6b6b, #ee5a24)'
-                          : 'linear-gradient(90deg, #667eea, #764ba2)',
-                        opacity: 0.8,
+                          ? '#ef4444'
+                          : '#10b981',
                       }
                     }}
                   >
-                    {/* Animated Gradient Overlay */}
-                    <Box
-                      className="item-gradient"
-                      sx={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1))',
-                        opacity: 0,
-                        transition: 'opacity 0.3s ease',
-                        pointerEvents: 'none',
-                      }}
-                    />
-                    
                     <CardContent sx={{ flexGrow: 1, p: 3, position: 'relative', zIndex: 1 }}>
                       {/* Header with Actions */}
                       <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
                         <Box flexGrow={1} minWidth={0}>
                           <Typography 
                             variant="h6" 
-                            fontWeight="bold" 
+                            fontWeight="600" 
                             sx={{
-                              background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                              backgroundClip: 'text',
-                              WebkitBackgroundClip: 'text',
-                              WebkitTextFillColor: 'transparent',
+                              color: '#1f2937',
                               mb: 0.5,
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
                               whiteSpace: 'nowrap',
+                              fontSize: '1.1rem',
                             }}
                           >
                             {item.name}
                           </Typography>
                           <Typography 
                             variant="body2" 
-                            color="text.secondary" 
                             sx={{
+                              color: '#6b7280',
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
                               whiteSpace: 'nowrap',
                               mb: 1,
+                              fontSize: '0.875rem',
                             }}
                           >
                             {item.description || 'No description available'}
                           </Typography>
                           {item.sku && (
-                            <Typography variant="caption" color="text.secondary" sx={{ fontFamily: 'monospace' }}>
+                            <Typography variant="caption" sx={{ 
+                              color: '#9ca3af',
+                              fontFamily: 'monospace',
+                              fontSize: '0.75rem',
+                              backgroundColor: '#f3f4f6',
+                              px: 1,
+                              py: 0.5,
+                              borderRadius: 1,
+                            }}>
                               SKU: {item.sku}
                             </Typography>
                           )}
@@ -1061,7 +1033,7 @@ const ItemsPage: React.FC = () => {
                         <Box className="item-actions" sx={{
                           opacity: 0,
                           transform: 'translateY(-10px)',
-                          transition: 'all 0.3s ease',
+                          transition: 'all 0.2s ease',
                         }}>
                           <Tooltip title="More Actions">
                             <IconButton
@@ -1071,17 +1043,18 @@ const ItemsPage: React.FC = () => {
                                 setItemMenuAnchor(e.currentTarget)
                               }}
                               sx={{
-                                background: 'rgba(255, 255, 255, 0.9)',
-                                backdropFilter: 'blur(10px)',
+                                backgroundColor: '#f8fafc',
+                                color: '#64748b',
+                                border: '1px solid #e2e8f0',
                                 '&:hover': {
-                                  background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                                  backgroundColor: '#3b82f6',
                                   color: 'white',
-                                  transform: 'scale(1.1)',
+                                  transform: 'scale(1.05)',
                                 },
-                                transition: 'all 0.3s ease'
+                                transition: 'all 0.2s ease'
                               }}
                             >
-                              <MoreVertIcon />
+                              <MoreVertIcon sx={{ fontSize: 18 }} />
                             </IconButton>
                           </Tooltip>
                         </Box>
@@ -1089,17 +1062,18 @@ const ItemsPage: React.FC = () => {
 
                       {/* Price and Quantity */}
                       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-    <Box>
-                          <Typography variant="h5" fontWeight="bold" sx={{
-                            background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                            backgroundClip: 'text',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
+                        <Box>
+                          <Typography variant="h5" fontWeight="600" sx={{
+                            color: '#1f2937',
+                            fontSize: '1.5rem',
                           }}>
                             ₹{item.price.toFixed(2)}
-        </Typography>
+                          </Typography>
                           {item.cost_price && item.cost_price > 0 && (
-                            <Typography variant="caption" color="text.secondary">
+                            <Typography variant="caption" sx={{
+                              color: '#6b7280',
+                              fontSize: '0.75rem',
+                            }}>
                               Cost: ₹{item.cost_price.toFixed(2)}
                             </Typography>
                           )}
@@ -1107,27 +1081,35 @@ const ItemsPage: React.FC = () => {
                         
                         <Box textAlign="right">
                           <Box display="flex" alignItems="center" gap={1}>
-                            <Typography variant="body2" color="text.secondary">
+                            <Typography variant="body2" sx={{
+                              color: '#6b7280',
+                              fontSize: '0.875rem',
+                            }}>
                               Stock:
                             </Typography>
                             <Typography 
                               variant="body2" 
-                              color={item.is_low_stock ? 'error.main' : 'text.primary'}
-                              fontWeight="bold"
                               sx={{
-                                px: 1,
+                                color: item.is_low_stock ? '#dc2626' : '#059669',
+                                fontWeight: '600',
+                                px: 1.5,
                                 py: 0.5,
-                                borderRadius: 2,
-                                background: item.is_low_stock 
-                                  ? 'rgba(244, 67, 54, 0.1)' 
-                                  : 'rgba(76, 175, 80, 0.1)',
+                                borderRadius: 1.5,
+                                backgroundColor: item.is_low_stock 
+                                  ? '#fef2f2' 
+                                  : '#f0fdf4',
+                                border: `1px solid ${item.is_low_stock ? '#fecaca' : '#bbf7d0'}`,
+                                fontSize: '0.875rem',
                               }}
                             >
                               {item.quantity} {item.unit}
                             </Typography>
                           </Box>
                           {item.min_quantity > 0 && (
-                            <Typography variant="caption" color="text.secondary">
+                            <Typography variant="caption" sx={{
+                              color: '#9ca3af',
+                              fontSize: '0.75rem',
+                            }}>
                               Min: {item.min_quantity}
                             </Typography>
                           )}
@@ -1141,12 +1123,17 @@ const ItemsPage: React.FC = () => {
                             <Chip 
                               label={item.category} 
                               size="small" 
-                              color="primary" 
-                              variant="outlined"
-                              icon={<CategoryIcon />}
+                              icon={<CategoryIcon sx={{ fontSize: 14 }} />}
                               sx={{ 
-                                fontWeight: 'bold',
-                                '&:hover': { transform: 'scale(1.05)' },
+                                fontWeight: '500',
+                                backgroundColor: '#eff6ff',
+                                color: '#2563eb',
+                                border: '1px solid #bfdbfe',
+                                fontSize: '0.75rem',
+                                '&:hover': { 
+                                  backgroundColor: '#dbeafe',
+                                  transform: 'scale(1.02)',
+                                },
                                 transition: 'all 0.2s ease'
                               }}
                             />
@@ -1155,17 +1142,18 @@ const ItemsPage: React.FC = () => {
                             <Chip 
                               label="Low Stock" 
                               size="small" 
-                              color="error" 
-                              variant="filled"
-                              icon={<WarningIcon />}
+                              icon={<WarningIcon sx={{ fontSize: 14 }} />}
                               sx={{ 
-                                fontWeight: 'bold',
-                                animation: 'pulse 2s infinite',
-                                '@keyframes pulse': {
-                                  '0%': { transform: 'scale(1)' },
-                                  '50%': { transform: 'scale(1.05)' },
-                                  '100%': { transform: 'scale(1)' },
-                                }
+                                fontWeight: '500',
+                                backgroundColor: '#fef2f2',
+                                color: '#dc2626',
+                                border: '1px solid #fecaca',
+                                fontSize: '0.75rem',
+                                '&:hover': { 
+                                  backgroundColor: '#fee2e2',
+                                  transform: 'scale(1.02)',
+                                },
+                                transition: 'all 0.2s ease'
                               }}
                             />
                           )}
@@ -1173,15 +1161,16 @@ const ItemsPage: React.FC = () => {
                         
                         <Box display="flex" alignItems="center" gap={1}>
                           <Box sx={{
-                            width: 8,
-                            height: 8,
+                            width: 6,
+                            height: 6,
                             borderRadius: '50%',
-                            background: item.is_active 
-                              ? 'linear-gradient(135deg, #4caf50, #8bc34a)'
-                              : 'linear-gradient(135deg, #f44336, #ff9800)',
-                            boxShadow: `0 0 10px ${item.is_active ? '#4caf50' : '#f44336'}`,
+                            backgroundColor: item.is_active ? '#10b981' : '#ef4444',
                           }} />
-                          <Typography variant="caption" color="text.secondary">
+                          <Typography variant="caption" sx={{
+                            color: '#6b7280',
+                            fontSize: '0.75rem',
+                            fontWeight: '500',
+                          }}>
                             {item.is_active ? 'Active' : 'Inactive'}
                           </Typography>
                         </Box>
@@ -1219,23 +1208,76 @@ const ItemsPage: React.FC = () => {
       </Menu>
 
       {/* Create Item Dialog */}
-      <Dialog open={createDialogOpen} onClose={handleCloseCreateDialog} maxWidth="md" fullWidth>
-        <DialogTitle>
-          <Box display="flex" alignItems="center" gap={1}>
-            <AddIcon color="primary" />
-            <Typography variant="h6">Create New Item</Typography>
+      <Dialog 
+        open={createDialogOpen} 
+        onClose={handleCloseCreateDialog} 
+        maxWidth="lg" 
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+            maxHeight: '90vh'
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          pb: 2,
+          borderBottom: '1px solid #e2e8f0',
+          backgroundColor: '#f8fafc',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2
+        }}>
+          <Box sx={{
+            p: 1.5,
+            borderRadius: 2,
+            background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+            color: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 4px 14px rgba(59, 130, 246, 0.3)',
+          }}>
+            <InventoryIcon sx={{ fontSize: 24 }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" fontWeight="700" sx={{ color: '#1f2937', mb: 0.5 }}>
+              Create New Item
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#6b7280' }}>
+              Add item details, pricing, and inventory information
+            </Typography>
           </Box>
         </DialogTitle>
-        <DialogContent>
-          <Box sx={{ mt: 2 }}>
+        <DialogContent sx={{ p: 0 }}>
+          <Box sx={{ p: 3 }}>
+          {/* Basic Information Section */}
+          <Card sx={{ 
+            backgroundColor: '#f8fafc', 
+            border: '1px solid #e2e8f0',
+            borderRadius: 2,
+            p: 3,
+            mb: 3
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+              <Box sx={{
+                p: 1,
+                borderRadius: 1.5,
+                background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <InventoryIcon sx={{ fontSize: 20 }} />
+              </Box>
+              <Typography variant="h6" fontWeight="600" sx={{ color: '#1f2937' }}>
+                Basic Information
+              </Typography>
+            </Box>
+            
             <Grid container spacing={3}>
-              {/* Basic Information */}
-              <Grid item xs={12}>
-                <Typography variant="h6" gutterBottom color="primary">
-                  Basic Information
-                </Typography>
-              </Grid>
-              
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
@@ -1245,6 +1287,12 @@ const ItemsPage: React.FC = () => {
                   error={!!formErrors.name}
                   helperText={formErrors.name}
                   placeholder="Enter item name"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      backgroundColor: 'white',
+                    }
+                  }}
                 />
               </Grid>
               
@@ -1255,6 +1303,12 @@ const ItemsPage: React.FC = () => {
                   value={formData.sku}
                   onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
                   placeholder="Enter SKU (optional)"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      backgroundColor: 'white',
+                    }
+                  }}
                 />
               </Grid>
               
@@ -1267,16 +1321,43 @@ const ItemsPage: React.FC = () => {
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Enter item description"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      backgroundColor: 'white',
+                    }
+                  }}
                 />
               </Grid>
+            </Grid>
+          </Card>
 
-              {/* Pricing */}
-              <Grid item xs={12}>
-                <Typography variant="h6" gutterBottom color="primary" sx={{ mt: 2 }}>
-                  Pricing & Inventory
-                </Typography>
-              </Grid>
-              
+          {/* Pricing Section */}
+          <Card sx={{ 
+            backgroundColor: '#f8fafc', 
+            border: '1px solid #e2e8f0',
+            borderRadius: 2,
+            p: 3,
+            mb: 3
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+              <Box sx={{
+                p: 1,
+                borderRadius: 1.5,
+                background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <StoreIcon sx={{ fontSize: 20 }} />
+              </Box>
+              <Typography variant="h6" fontWeight="600" sx={{ color: '#1f2937' }}>
+                Pricing Information
+              </Typography>
+            </Box>
+            
+            <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
@@ -1288,6 +1369,12 @@ const ItemsPage: React.FC = () => {
                   helperText={formErrors.price}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">₹</InputAdornment>,
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      backgroundColor: 'white',
+                    }
                   }}
                 />
               </Grid>
@@ -1304,6 +1391,12 @@ const ItemsPage: React.FC = () => {
                   InputProps={{
                     startAdornment: <InputAdornment position="start">₹</InputAdornment>,
                   }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      backgroundColor: 'white',
+                    }
+                  }}
                 />
               </Grid>
               
@@ -1315,16 +1408,43 @@ const ItemsPage: React.FC = () => {
                   value={formData.tax_rate}
                   onChange={(e) => setFormData({ ...formData, tax_rate: parseFloat(e.target.value) || 0 })}
                   inputProps={{ min: 0, max: 100, step: 0.01 }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      backgroundColor: 'white',
+                    }
+                  }}
                 />
               </Grid>
+            </Grid>
+          </Card>
 
-              {/* Inventory */}
-              <Grid item xs={12}>
-                <Typography variant="h6" gutterBottom color="primary" sx={{ mt: 2 }}>
-                  Inventory Management
-                </Typography>
-              </Grid>
-              
+          {/* Inventory Section */}
+          <Card sx={{ 
+            backgroundColor: '#f8fafc', 
+            border: '1px solid #e2e8f0',
+            borderRadius: 2,
+            p: 3,
+            mb: 3
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+              <Box sx={{
+                p: 1,
+                borderRadius: 1.5,
+                background: 'linear-gradient(135deg, #10b981, #059669)',
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <InventoryIcon sx={{ fontSize: 20 }} />
+              </Box>
+              <Typography variant="h6" fontWeight="600" sx={{ color: '#1f2937' }}>
+                Inventory Management
+              </Typography>
+            </Box>
+            
+            <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
@@ -1335,6 +1455,12 @@ const ItemsPage: React.FC = () => {
                   error={!!formErrors.quantity}
                   helperText={formErrors.quantity}
                   inputProps={{ min: 0 }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      backgroundColor: 'white',
+                    }
+                  }}
                 />
               </Grid>
               
@@ -1348,6 +1474,12 @@ const ItemsPage: React.FC = () => {
                   error={!!formErrors.min_quantity}
                   helperText={formErrors.min_quantity}
                   inputProps={{ min: 0 }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      backgroundColor: 'white',
+                    }
+                  }}
                 />
               </Grid>
               
@@ -1358,6 +1490,12 @@ const ItemsPage: React.FC = () => {
                     value={formData.unit}
                     onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
                     input={<OutlinedInput label="Unit" />}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        backgroundColor: 'white',
+                      }
+                    }}
                   >
                     <MenuItem value="PCS">PCS</MenuItem>
                     <MenuItem value="KG">KG</MenuItem>
@@ -1376,16 +1514,43 @@ const ItemsPage: React.FC = () => {
                   value={formData.barcode}
                   onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
                   placeholder="Enter barcode (optional)"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      backgroundColor: 'white',
+                    }
+                  }}
                 />
               </Grid>
+            </Grid>
+          </Card>
 
-              {/* Category & Status */}
-              <Grid item xs={12}>
-                <Typography variant="h6" gutterBottom color="primary" sx={{ mt: 2 }}>
-                  Category & Status
-                </Typography>
-              </Grid>
-              
+          {/* Category & Status Section */}
+          <Card sx={{ 
+            backgroundColor: '#f8fafc', 
+            border: '1px solid #e2e8f0',
+            borderRadius: 2,
+            p: 3,
+            mb: 3
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+              <Box sx={{
+                p: 1,
+                borderRadius: 1.5,
+                background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <CategoryIcon sx={{ fontSize: 20 }} />
+              </Box>
+              <Typography variant="h6" fontWeight="600" sx={{ color: '#1f2937' }}>
+                Category & Status
+              </Typography>
+            </Box>
+            
+            <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
                   <InputLabel>Category</InputLabel>
@@ -1393,6 +1558,12 @@ const ItemsPage: React.FC = () => {
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                     input={<OutlinedInput label="Category" />}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        backgroundColor: 'white',
+                      }
+                    }}
                   >
                     <MenuItem value="">No Category</MenuItem>
                     {categoriesArray.map((category: string) => (
@@ -1410,36 +1581,90 @@ const ItemsPage: React.FC = () => {
                     <Switch
                       checked={formData.is_active}
                       onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                      sx={{
+                        '& .MuiSwitch-switchBase.Mui-checked': {
+                          color: '#10b981',
+                        },
+                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                          backgroundColor: '#10b981',
+                        },
+                      }}
                     />
                   }
-                  label="Active Item"
+                  label={
+                    <Box>
+                      <Typography variant="body1" fontWeight="500">
+                        Active Item
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        Enable to make this item available for sale
+                      </Typography>
+                    </Box>
+                  }
                 />
               </Grid>
             </Grid>
+          </Card>
           </Box>
         </DialogContent>
-        <DialogActions sx={{ p: 3 }}>
-          <Button onClick={handleCloseCreateDialog} disabled={isSubmitting}>
-            Cancel
-          </Button>
-          <Button
+        <DialogActions sx={{ 
+          p: 3, 
+          borderTop: '1px solid #e2e8f0',
+          backgroundColor: '#f8fafc',
+          gap: 2
+        }}>
+          <Button 
+            onClick={handleCloseCreateDialog} 
+            disabled={isSubmitting}
             variant="outlined"
-            onClick={() => {
-              console.log('Current form data:', formData)
-              console.log('Current shop ID:', currentShop?.id)
-              console.log('Form errors:', formErrors)
+            sx={{
+              borderRadius: 2,
+              px: 3,
+              py: 1.5,
+              textTransform: 'none',
+              fontWeight: '500',
+              borderColor: '#d1d5db',
+              color: '#6b7280',
+              '&:hover': {
+                borderColor: '#9ca3af',
+                backgroundColor: '#f9fafb',
+              }
             }}
-            sx={{ mr: 1 }}
           >
-            Debug
+            Cancel
           </Button>
           <Button
             variant="contained"
             onClick={handleFormSubmit}
             disabled={isSubmitting}
-            startIcon={<AddIcon />}
+            sx={{
+              borderRadius: 2,
+              px: 4,
+              py: 1.5,
+              textTransform: 'none',
+              fontWeight: '600',
+              backgroundColor: '#3b82f6',
+              boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+              '&:hover': {
+                backgroundColor: '#2563eb',
+                transform: 'translateY(-1px)',
+                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)',
+              },
+              '&:disabled': {
+                backgroundColor: '#9ca3af',
+                color: 'white',
+              },
+              transition: 'all 0.2s ease'
+            }}
           >
-            {isSubmitting ? 'Creating...' : 'Create Item'}
+            {isSubmitting ? (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <CircularProgress size={16} sx={{ color: 'white' }} />
+                Creating Item...
+              </Box>
+            ) : (
+              'Create Item'
+            )}
           </Button>
         </DialogActions>
       </Dialog>
@@ -1700,7 +1925,7 @@ const ItemsPage: React.FC = () => {
         </Alert>
       </Snackbar>
 
-        {/* Stunning Floating Action Button */}
+        {/* Floating Action Button */}
         <Zoom in timeout={1500}>
           <Fab
             aria-label="add"
@@ -1710,30 +1935,25 @@ const ItemsPage: React.FC = () => {
             }}
             sx={{
               position: 'fixed',
-              bottom: 32,
-              right: 32,
-              background: 'linear-gradient(135deg, #667eea, #764ba2)',
+              bottom: 24,
+              right: 24,
+              backgroundColor: '#3b82f6',
               color: 'white',
-              width: 64,
-              height: 64,
-              boxShadow: '0 8px 25px rgba(102, 126, 234, 0.4)',
+              width: 56,
+              height: 56,
+              boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)',
               '&:hover': {
-                background: 'linear-gradient(135deg, #764ba2, #667eea)',
-                transform: 'scale(1.1) rotate(5deg)',
-                boxShadow: '0 12px 35px rgba(102, 126, 234, 0.6)',
+                backgroundColor: '#2563eb',
+                transform: 'scale(1.05)',
+                boxShadow: '0 6px 16px rgba(59, 130, 246, 0.6)',
               },
               '&:active': {
                 transform: 'scale(0.95)',
               },
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              animation: 'float 3s ease-in-out infinite',
-              '@keyframes float': {
-                '0%, 100%': { transform: 'translateY(0px)' },
-                '50%': { transform: 'translateY(-5px)' },
-              }
+              transition: 'all 0.2s ease',
             }}
           >
-            <AddIcon sx={{ fontSize: 28 }} />
+            <AddIcon sx={{ fontSize: 24 }} />
           </Fab>
         </Zoom>
       </Box>

@@ -62,6 +62,14 @@ func (s *BillService) CreateBill(shopID, userID uuid.UUID, req models.BillReques
 		totalAmount = 0
 	}
 
+	// Determine initial payment amount and status
+	paidAmount := 0.0
+	status := "draft"
+	if req.IsPaid && req.PaymentAmount > 0 {
+		paidAmount = req.PaymentAmount
+		status = "paid"
+	}
+
 	// Create bill
 	bill := models.Bill{
 		ShopID:        shopID,
@@ -73,10 +81,10 @@ func (s *BillService) CreateBill(shopID, userID uuid.UUID, req models.BillReques
 		TaxAmount:     taxAmount,
 		Discount:      req.Discount,
 		TotalAmount:   totalAmount,
-		PaidAmount:    0,
-		PendingAmount: totalAmount, // Initially pending amount equals total amount
-		Balance:       totalAmount,
-		Status:        "draft",
+		PaidAmount:    paidAmount,
+		PendingAmount: totalAmount - paidAmount,
+		Balance:       totalAmount - paidAmount,
+		Status:        status,
 		Notes:         req.Notes,
 		Terms:         req.Terms,
 		CreatedBy:     userID.String(), // Set the user who created the bill
@@ -113,6 +121,28 @@ func (s *BillService) CreateBill(shopID, userID uuid.UUID, req models.BillReques
 
 		// Update item quantity
 		if err := s.db.Model(&item).Update("quantity", int(item.Quantity)-itemReq.Quantity).Error; err != nil {
+			return nil, err
+		}
+	}
+
+	// Create payment if bill is marked as paid
+	if req.IsPaid && req.PaymentAmount > 0 {
+		paymentDate, err := time.Parse("2006-01-02", req.PaymentDate)
+		if err != nil {
+			paymentDate = time.Now() // Use current date if parsing fails
+		}
+
+		payment := models.Payment{
+			BillID:        bill.ID,
+			Amount:        req.PaymentAmount,
+			PaymentDate:   paymentDate,
+			PaymentMethod: req.PaymentMethod,
+			Reference:     req.PaymentRef,
+			Notes:         req.PaymentNotes,
+			CreatedBy:     userID.String(),
+		}
+
+		if err := s.db.Create(&payment).Error; err != nil {
 			return nil, err
 		}
 	}

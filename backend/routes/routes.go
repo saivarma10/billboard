@@ -6,9 +6,10 @@ import (
 	"billboard/backend/services"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-func SetupRoutes(router *gin.Engine, services *services.Services) {
+func SetupRoutes(router *gin.Engine, services *services.Services, db *gorm.DB) {
 	// Initialize handlers
 	authHandler := handlers.NewAuthHandler(services.Auth)
 	shopHandler := handlers.NewShopHandler(services.Shop)
@@ -37,15 +38,15 @@ func SetupRoutes(router *gin.Engine, services *services.Services) {
 			{
 				shops.GET("", shopHandler.GetShops)
 				shops.POST("", shopHandler.CreateShop)
-				shops.GET("/:shopId", middleware.ShopAccessMiddleware(), shopHandler.GetShop)
-				shops.PUT("/:shopId", middleware.ShopAccessMiddleware(), shopHandler.UpdateShop)
-				shops.DELETE("/:shopId", middleware.ShopAccessMiddleware(), shopHandler.DeleteShop)
-				shops.POST("/:shopId/invite", middleware.ShopAccessMiddleware(), shopHandler.InviteUser)
+				shops.GET("/:shopId", middleware.ShopAccessMiddleware(db), shopHandler.GetShop)
+				shops.PUT("/:shopId", middleware.ShopAccessMiddleware(db), shopHandler.UpdateShop)
+				shops.DELETE("/:shopId", middleware.ShopAccessMiddleware(db), shopHandler.DeleteShop)
+				shops.POST("/:shopId/invite", middleware.ShopAccessMiddleware(db), shopHandler.InviteUser)
 			}
 
 			// Shop-specific routes
 			shopRoutes := protected.Group("/shops/:shopId")
-			shopRoutes.Use(middleware.ShopAccessMiddleware())
+			shopRoutes.Use(middleware.ShopAccessMiddleware(db))
 			{
 				// Items
 				items := shopRoutes.Group("/items")

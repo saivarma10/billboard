@@ -17,14 +17,22 @@ import {
   Chip,
   IconButton,
   Menu,
-  MenuItem
+  MenuItem,
+  InputAdornment,
+  Fade,
+  Paper
 } from '@mui/material'
 import { 
   Add as AddIcon, 
   MoreVert as MoreVertIcon,
   Business as BusinessIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon
+  Delete as DeleteIcon,
+  Store as StoreIcon,
+  LocationOn as LocationIcon,
+  Phone as PhoneIcon,
+  Email as EmailIcon,
+  Receipt as ReceiptIcon
 } from '@mui/icons-material'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../store/store'
@@ -38,6 +46,14 @@ interface ShopFormData {
   gst_number: string
 }
 
+interface FormErrors {
+  name?: string
+  address?: string
+  phone?: string
+  email?: string
+  gst_number?: string
+}
+
 const SettingsPage: React.FC = () => {
   const dispatch = useDispatch()
   const { shops, currentShop, loading, error } = useSelector((state: RootState) => state.shop)
@@ -49,6 +65,8 @@ const SettingsPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
   const [showSuccessSnackbar, setShowSuccessSnackbar] = useState(false)
+  const [formErrors, setFormErrors] = useState<FormErrors>({})
+  const [isFormValid, setIsFormValid] = useState(false)
   
   const [formData, setFormData] = useState<ShopFormData>({
     name: '',
@@ -71,6 +89,80 @@ const SettingsPage: React.FC = () => {
     }
   }, [shops, loading, error])
 
+  // Real-time form validation
+  const validateField = (field: keyof ShopFormData, value: string): string | undefined => {
+    switch (field) {
+      case 'name':
+        if (!value.trim()) return 'Shop name is required'
+        if (value.trim().length < 2) return 'Shop name must be at least 2 characters'
+        if (value.trim().length > 100) return 'Shop name must be less than 100 characters'
+        return undefined
+      case 'email':
+        if (value && value.trim()) {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+          if (!emailRegex.test(value)) return 'Please enter a valid email address'
+        }
+        return undefined
+      case 'phone':
+        if (value && value.trim()) {
+          const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/
+          if (!phoneRegex.test(value.replace(/[\s\-\(\)]/g, ''))) return 'Please enter a valid phone number'
+        }
+        return undefined
+      case 'gst_number':
+        if (value && value.trim()) {
+          if (value.length < 10) return 'GST number must be at least 10 characters'
+        }
+        return undefined
+      default:
+        return undefined
+    }
+  }
+
+  const validateForm = (): boolean => {
+    const errors: FormErrors = {}
+    let isValid = true
+
+    // Validate name (required)
+    const nameError = validateField('name', formData.name)
+    if (nameError) {
+      errors.name = nameError
+      isValid = false
+    }
+
+    // Validate email (optional but must be valid if provided)
+    const emailError = validateField('email', formData.email)
+    if (emailError) {
+      errors.email = emailError
+      isValid = false
+    }
+
+    // Validate phone (optional but must be valid if provided)
+    const phoneError = validateField('phone', formData.phone)
+    if (phoneError) {
+      errors.phone = phoneError
+      isValid = false
+    }
+
+    // Validate GST number (optional but must be valid if provided)
+    const gstError = validateField('gst_number', formData.gst_number)
+    if (gstError) {
+      errors.gst_number = gstError
+      isValid = false
+    }
+
+    setFormErrors(errors)
+    setIsFormValid(isValid)
+    return isValid
+  }
+
+  // Validate form whenever formData changes
+  useEffect(() => {
+    if (createDialogOpen || editDialogOpen) {
+      validateForm()
+    }
+  }, [formData, createDialogOpen, editDialogOpen])
+
   const handleCreateShop = () => {
     setFormData({
       name: '',
@@ -79,6 +171,8 @@ const SettingsPage: React.FC = () => {
       email: '',
       gst_number: ''
     })
+    setFormErrors({})
+    setIsFormValid(false)
     setCreateDialogOpen(true)
   }
 
@@ -90,26 +184,16 @@ const SettingsPage: React.FC = () => {
       email: shop.email || '',
       gst_number: shop.gst_number || ''
     })
+    setFormErrors({})
+    setIsFormValid(false)
     setSelectedShop(shop)
     setEditDialogOpen(true)
   }
 
   const handleFormSubmit = async () => {
-    // Comprehensive validation
-    if (!formData.name.trim()) {
-      setSuccessMessage('Shop name is required')
-      setShowSuccessSnackbar(true)
-      return
-    }
-
-    if (formData.name.trim().length < 2) {
-      setSuccessMessage('Shop name must be at least 2 characters')
-      setShowSuccessSnackbar(true)
-      return
-    }
-
-    if (formData.name.trim().length > 100) {
-      setSuccessMessage('Shop name must be less than 100 characters')
+    // Use the new validation system
+    if (!validateForm()) {
+      setSuccessMessage('Please fix the form errors before submitting')
       setShowSuccessSnackbar(true)
       return
     }
@@ -121,26 +205,6 @@ const SettingsPage: React.FC = () => {
       )
       if (duplicateShop) {
         setSuccessMessage('A shop with this name already exists')
-        setShowSuccessSnackbar(true)
-        return
-      }
-    }
-
-    // Validate email format if provided
-    if (formData.email && formData.email.trim()) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      if (!emailRegex.test(formData.email)) {
-        setSuccessMessage('Please enter a valid email address')
-        setShowSuccessSnackbar(true)
-        return
-      }
-    }
-
-    // Validate phone format if provided
-    if (formData.phone && formData.phone.trim()) {
-      const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/
-      if (!phoneRegex.test(formData.phone.replace(/[\s\-\(\)]/g, ''))) {
-        setSuccessMessage('Please enter a valid phone number')
         setShowSuccessSnackbar(true)
         return
       }
@@ -162,6 +226,8 @@ const SettingsPage: React.FC = () => {
           email: '',
           gst_number: ''
         })
+        setFormErrors({})
+        setIsFormValid(false)
         dispatch(fetchShops() as any)
       } else {
         setSuccessMessage(`Error: ${result.payload}`)
@@ -176,8 +242,15 @@ const SettingsPage: React.FC = () => {
   }
 
   const handleEditFormSubmit = async () => {
-    if (!formData.name.trim() || !selectedShop?.id) {
-      setSuccessMessage('Shop name is required')
+    if (!selectedShop?.id) {
+      setSuccessMessage('Shop ID is required')
+      setShowSuccessSnackbar(true)
+      return
+    }
+
+    // Use the new validation system
+    if (!validateForm()) {
+      setSuccessMessage('Please fix the form errors before submitting')
       setShowSuccessSnackbar(true)
       return
     }
@@ -190,6 +263,8 @@ const SettingsPage: React.FC = () => {
         setSuccessMessage('Shop updated successfully!')
         setShowSuccessSnackbar(true)
         setEditDialogOpen(false)
+        setFormErrors({})
+        setIsFormValid(false)
         dispatch(fetchShops() as any)
       } else {
         setSuccessMessage(`Error: ${result.payload}`)
@@ -365,67 +440,260 @@ const SettingsPage: React.FC = () => {
       )}
 
       {/* Create Shop Dialog */}
-      <Dialog open={createDialogOpen} onClose={() => setCreateDialogOpen(false)} maxWidth="md" fullWidth>
-        <DialogTitle>Create New Shop</DialogTitle>
-        <DialogContent>
-          <Grid container spacing={3} sx={{ mt: 1 }}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Shop Name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Address"
-                multiline
-                rows={3}
-                value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Phone"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="GST Number"
-                value={formData.gst_number}
-                onChange={(e) => setFormData({ ...formData, gst_number: e.target.value })}
-              />
-            </Grid>
-          </Grid>
+      <Dialog 
+        open={createDialogOpen} 
+        onClose={() => setCreateDialogOpen(false)} 
+        maxWidth="md" 
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+            background: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)'
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          textAlign: 'center', 
+          pb: 2,
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          color: 'white',
+          borderRadius: '12px 12px 0 0',
+          mx: -3,
+          mt: -3,
+          mb: 2
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
+            <StoreIcon sx={{ fontSize: 32 }} />
+            <Typography variant="h5" fontWeight="bold">
+              Create New Shop
+            </Typography>
+          </Box>
+          <Typography variant="body2" sx={{ opacity: 0.9, mt: 1 }}>
+            Set up your business information to get started
+          </Typography>
+        </DialogTitle>
+        
+        <DialogContent sx={{ px: 4, py: 3 }}>
+          <Fade in={true} timeout={500}>
+            <Paper elevation={0} sx={{ p: 3, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.8)' }}>
+              <Grid container spacing={3}>
+                {/* Shop Name */}
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Shop Name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    error={!!formErrors.name}
+                    helperText={formErrors.name || 'Enter your shop or business name'}
+                    required
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <StoreIcon color={formErrors.name ? 'error' : 'action'} />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        backgroundColor: 'white',
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          transform: 'translateY(-1px)',
+                          boxShadow: '0 4px 12px rgba(102, 126, 234, 0.15)',
+                        },
+                        '&.Mui-focused': {
+                          transform: 'translateY(-1px)',
+                          boxShadow: '0 4px 20px rgba(102, 126, 234, 0.25)',
+                        },
+                      },
+                    }}
+                  />
+                </Grid>
+
+                {/* Address */}
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Address"
+                    multiline
+                    rows={3}
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    error={!!formErrors.address}
+                    helperText={formErrors.address || 'Enter your shop address (optional)'}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 1 }}>
+                          <LocationIcon color={formErrors.address ? 'error' : 'action'} />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        backgroundColor: 'white',
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          transform: 'translateY(-1px)',
+                          boxShadow: '0 4px 12px rgba(102, 126, 234, 0.15)',
+                        },
+                        '&.Mui-focused': {
+                          transform: 'translateY(-1px)',
+                          boxShadow: '0 4px 20px rgba(102, 126, 234, 0.25)',
+                        },
+                      },
+                    }}
+                  />
+                </Grid>
+
+                {/* Phone and Email */}
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Phone Number"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    error={!!formErrors.phone}
+                    helperText={formErrors.phone || 'Enter contact number (optional)'}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <PhoneIcon color={formErrors.phone ? 'error' : 'action'} />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        backgroundColor: 'white',
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          transform: 'translateY(-1px)',
+                          boxShadow: '0 4px 12px rgba(102, 126, 234, 0.15)',
+                        },
+                        '&.Mui-focused': {
+                          transform: 'translateY(-1px)',
+                          boxShadow: '0 4px 20px rgba(102, 126, 234, 0.25)',
+                        },
+                      },
+                    }}
+                  />
+                </Grid>
+                
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Email Address"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    error={!!formErrors.email}
+                    helperText={formErrors.email || 'Enter email address (optional)'}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <EmailIcon color={formErrors.email ? 'error' : 'action'} />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        backgroundColor: 'white',
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          transform: 'translateY(-1px)',
+                          boxShadow: '0 4px 12px rgba(102, 126, 234, 0.15)',
+                        },
+                        '&.Mui-focused': {
+                          transform: 'translateY(-1px)',
+                          boxShadow: '0 4px 20px rgba(102, 126, 234, 0.25)',
+                        },
+                      },
+                    }}
+                  />
+                </Grid>
+
+                {/* GST Number */}
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="GST Number"
+                    value={formData.gst_number}
+                    onChange={(e) => setFormData({ ...formData, gst_number: e.target.value })}
+                    error={!!formErrors.gst_number}
+                    helperText={formErrors.gst_number || 'Enter GST registration number (optional)'}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <ReceiptIcon color={formErrors.gst_number ? 'error' : 'action'} />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        backgroundColor: 'white',
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          transform: 'translateY(-1px)',
+                          boxShadow: '0 4px 12px rgba(102, 126, 234, 0.15)',
+                        },
+                        '&.Mui-focused': {
+                          transform: 'translateY(-1px)',
+                          boxShadow: '0 4px 20px rgba(102, 126, 234, 0.25)',
+                        },
+                      },
+                    }}
+                  />
+                </Grid>
+              </Grid>
+            </Paper>
+          </Fade>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setCreateDialogOpen(false)} disabled={isSubmitting}>
+        
+        <DialogActions sx={{ px: 4, pb: 3, gap: 2 }}>
+          <Button 
+            onClick={() => setCreateDialogOpen(false)} 
+            disabled={isSubmitting}
+            sx={{ 
+              borderRadius: 2,
+              px: 3,
+              py: 1,
+              textTransform: 'none',
+              fontWeight: 600
+            }}
+          >
             Cancel
           </Button>
           <Button
             variant="contained"
             onClick={handleFormSubmit}
-            disabled={isSubmitting}
-            startIcon={<AddIcon />}
+            disabled={isSubmitting || !isFormValid}
+            startIcon={isSubmitting ? <CircularProgress size={20} /> : <AddIcon />}
+            sx={{ 
+              borderRadius: 2,
+              px: 4,
+              py: 1,
+              textTransform: 'none',
+              fontWeight: 600,
+              background: isFormValid 
+                ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                : 'rgba(0,0,0,0.12)',
+              '&:hover': {
+                background: isFormValid 
+                  ? 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)'
+                  : 'rgba(0,0,0,0.12)',
+                transform: 'translateY(-1px)',
+                boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+              },
+              transition: 'all 0.3s ease'
+            }}
           >
-            {isSubmitting ? 'Creating...' : 'Create Shop'}
+            {isSubmitting ? 'Creating Shop...' : 'Create Shop'}
           </Button>
         </DialogActions>
       </Dialog>

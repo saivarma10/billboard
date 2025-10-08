@@ -83,6 +83,13 @@ type BillRequest struct {
 	TaxRate    float64           `json:"tax_rate"`
 	Notes      string            `json:"notes"`
 	Terms      string            `json:"terms"`
+	// Payment options
+	PaymentMethod string  `json:"payment_method"`
+	PaymentAmount float64 `json:"payment_amount"`
+	PaymentDate   string  `json:"payment_date"`
+	PaymentRef    string  `json:"payment_reference"`
+	PaymentNotes  string  `json:"payment_notes"`
+	IsPaid        bool    `json:"is_paid"`
 }
 
 // BillItemRequest represents an item in a bill request
